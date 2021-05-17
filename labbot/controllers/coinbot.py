@@ -38,3 +38,36 @@ class CoinBot:
                 *self._flip_coin(),
             ],
         }
+
+
+def flip_coin(channel):
+    """Craft the CoinBot, flip the coin, and send the message to the channel
+    """
+
+    # Create a new CoinBot
+    coin_bot = CoinBot(channel)
+
+    # Get the onboarding message payload
+    message = coin_bot.get_message_payload()
+
+    # Post the onboarding message in Slack
+    #slack_web_client.chat_postMessage(**message)
+    return(message)
+
+
+if __name__ == "__main__":
+    from slack_sdk.web import WebClient
+    import os
+
+    # Create a slack client
+    slack_web_client = WebClient(token=os.environ.get("SLACK_TOKEN"))
+
+    # Get a new CoinBot
+    #coin_bot = CoinBot("#testing")
+    coin_bot = CoinBot("U021L1T8MAT")
+
+    # Get the onboarding message payload
+    message = coin_bot.get_message_payload()
+
+    # Post the onboarding message in slack
+    slack_web_client.chat_postMessage(**message)

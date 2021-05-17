@@ -3,8 +3,8 @@ import logging
 from flask import Flask
 from slack_sdk.web import WebClient
 from slackeventsapi import SlackEventAdapter
-from onboarding_tutorial import OnboardingTutorial
-from coinbot import CoinBot
+from .controllers import onboarding
+from .controllers import coinbot
 
 # Initialize the Flask App to host the event adapter
 app = Flask(__name__)
@@ -17,19 +17,6 @@ slack_web_client = WebClient(token=os.environ.get("SLACK_TOKEN"))
 
 # Store who has gotten a welcome message
 onboarding_tutorials_sent = {}
-
-def flip_coin(channel):
-    """Craft the CoinBot, flip the coin, and send the message to the channel
-    """
-
-    # Create a new CoinBot
-    coin_bot = CoinBot(channel)
-
-    # Get the onboarding message payload
-    message = coin_bot.get_message_payload()
-
-    # Post the onboarding message in Slack
-    slack_web_client.chat_postMessage(**message)
 
 
 def start_onboarding(user_id: str, channel: str):
@@ -159,7 +146,10 @@ def message(payload):
 
         # Execute the flip_coin function and send the results of
         # flipping a coin to the channel
-        return flip_coin(channel_id)
+        
+        # Post the onboarding message in Slack
+        output = slack_web_client.chat_postMessage(**coinbot.flip_coin(channel_id))
+        return output
     elif text and text.lower() == "start":
         # This was a user doing the tutorial
         return start_onboarding(user_id, channel_id)
