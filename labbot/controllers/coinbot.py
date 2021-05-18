@@ -31,15 +31,17 @@ class CoinBot:
         
         text = f"The result is {results}"
 
-        return {"type": "section", "text": { "type": "mrkdwn", "text": text}},
+        return text
     
     # Craft and return the entire message payload as a dictionary.
     def get_message_payload(self):
+        coin_flip = self._flip_coin()
         return {
             "channel": self.channel,
+            "text": coin_flip,
             "blocks": [
                 self.COIN_BLOCK,
-                *self._flip_coin(),
+                {"type": "section", "text": { "type": "mrkdwn", "text": coin_flip}}
             ],
         }
 
@@ -52,7 +54,10 @@ def flip_coin():
     token = request.form.get('token', None)
     channel = request.form.get('channel_id', None)
     text = request.form.get('text', None)
+    token2 = os.environ.get("SLACK_EVENTS_TOKEN")
 
+    if token != token2:
+        abort(403)
     # Create a new CoinBot
     coin_bot = CoinBot(channel)
 
@@ -61,6 +66,7 @@ def flip_coin():
 
     # Post the onboarding message in Slack
     #slack_web_client.chat_postMessage(**message)
+    #print(message)
     return(message)
     #payload = {'text': json.dumps(request.form)}
     #return jsonify(payload)
