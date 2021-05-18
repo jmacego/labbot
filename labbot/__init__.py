@@ -1,10 +1,12 @@
 import os
 import logging
-from flask import Flask
+from flask import Flask, render_template, Blueprint, abort, jsonify
+from jinja2 import TemplateNotFound
 from slack_sdk.web import WebClient
 from slackeventsapi import SlackEventAdapter
 from .controllers import onboarding
 from .controllers import coinbot
+from .controllers.coinbot import coin
 
 # Initialize the Flask App to host the event adapter
 app = Flask(__name__)
@@ -15,9 +17,12 @@ slack_events_adapter = SlackEventAdapter(os.environ.get("SLACK_SIGNING_SECRET"),
 # Initialize a Web API client
 slack_web_client = WebClient(token=os.environ.get("SLACK_TOKEN"))
 
-# Store who has gotten a welcome message
-onboarding_tutorials_sent = {}
+app.register_blueprint(coin)
 
+def slash():
+    # THis should get verified against the signing key
+    payload = {'text': 'DigitalOcean Slack slash command is successful!'}
+    return jsonify(payload)
 
 def start_onboarding(user_id: str, channel: str):
     # Create a new onboarding tutorial.

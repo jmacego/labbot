@@ -1,3 +1,6 @@
+# Store who has gotten a welcome message
+onboarding_tutorials_sent = {}
+
 class OnboardingTutorial:
     """Constructs the onboarding message and stores the state of which tasks were completed."""
 
@@ -18,7 +21,7 @@ class OnboardingTutorial:
         self.username = "pythonboardingbot"
         self.icon_emoji = ":robot_face:"
         self.timestamp = ""
-        self.reaction_task_completed = False
+        self.reaction_task_completed = Falses
         self.pin_task_completed = False
 
     def get_message_payload(self):
@@ -74,3 +77,4 @@ class OnboardingTutorial:
             {"type": "section", "text": {"type": "mrkdwn", "text": text}},
             {"type": "context", "elements": [{"type": "mrkdwn", "text": information}]},
         ]
+

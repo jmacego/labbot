@@ -1,4 +1,8 @@
 import random
+from flask import Blueprint, render_template, abort, request, jsonify
+from jinja2 import TemplateNotFound
+import json
+import os
 
 class CoinBot:
 
@@ -39,10 +43,15 @@ class CoinBot:
             ],
         }
 
-
-def flip_coin(channel):
+coin = Blueprint('coin', __name__, template_folder='templates/coin')
+@coin.route('/coin', defaults={'page': 'flip'})
+@coin.route('/coin/flip', methods=['POST'])
+def flip_coin():
     """Craft the CoinBot, flip the coin, and send the message to the channel
     """
+    token = request.form.get('token', None)
+    channel = request.form.get('channel_id', None)
+    text = request.form.get('text', None)
 
     # Create a new CoinBot
     coin_bot = CoinBot(channel)
@@ -53,6 +62,8 @@ def flip_coin(channel):
     # Post the onboarding message in Slack
     #slack_web_client.chat_postMessage(**message)
     return(message)
+    #payload = {'text': json.dumps(request.form)}
+    #return jsonify(payload)
 
 
 if __name__ == "__main__":
