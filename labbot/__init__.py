@@ -7,6 +7,7 @@ from slackeventsapi import SlackEventAdapter
 from .controllers import onboarding
 from .controllers import coinbot
 from .controllers.coinbot import coin
+from .controllers.weather import weather
 
 # Initialize the Flask App to host the event adapter
 app = Flask(__name__)
@@ -18,6 +19,7 @@ slack_events_adapter = SlackEventAdapter(os.environ.get("SLACK_SIGNING_SECRET"),
 slack_web_client = WebClient(token=os.environ.get("SLACK_TOKEN"))
 
 app.register_blueprint(coin)
+app.register_blueprint(weather)
 
 def slash():
     # THis should get verified against the signing key
