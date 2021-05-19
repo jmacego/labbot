@@ -8,7 +8,7 @@ from jinja2 import TemplateNotFound
 
 
 omw_api_key = os.environ.get("OMW_KEY")
-omw_zip = os.environ.get("OMW_ZIP")
+#omw_zip = os.environ.get("OMW_ZIP")
 
 #influx = InfluxDBClient(config['influx']['host'], 8086, config['influx']['username'], config['influx']['password'], 'weather')
 weather = Blueprint('weather', __name__, template_folder='templates/weather')
@@ -39,7 +39,7 @@ def get_weather():
         if regex.match(args[1]):
             omw_zip = args[1] + ",us"
         
-    weather = get_owm()
+    weather = get_owm(omw_zip)
     temperature = Temperature(weather['main']['temp'])
 
     message = f"The current temperature is {getattr(temperature, unit):.1f}{unit.upper()}"
@@ -98,7 +98,7 @@ class Temperature:
         """Convert a temperature from Kelvin to Celsius"""
         return k - 273.15
 
-def get_owm():
+def get_owm(omw_zip):
     complete_url = f"https://api.openweathermap.org/data/2.5/weather?zip={omw_zip}&appid={omw_api_key}"
     print(complete_url)
     response = requests.get(complete_url) 
