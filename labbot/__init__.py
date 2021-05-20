@@ -1,13 +1,17 @@
 import os
+import requests
 import logging
+import json
 from flask import Flask, render_template, Blueprint, abort, jsonify
 from jinja2 import TemplateNotFound
 from slack_sdk.web import WebClient
 from slackeventsapi import SlackEventAdapter
-from .controllers import onboarding
-from .controllers import coinbot
+from .controllers import apphome
 from .controllers.coinbot import coin
 from .controllers.weather import weather
+from .controllers.misc import misc
+from .controllers.onboarding import onboarding
+#from .controllers.apphome import apphome
 
 # Initialize the Flask App to host the event adapter
 app = Flask(__name__)
@@ -20,6 +24,9 @@ slack_web_client = WebClient(token=os.environ.get("SLACK_TOKEN"))
 
 app.register_blueprint(coin)
 app.register_blueprint(weather)
+app.register_blueprint(misc)
+app.register_blueprint(apphome.apphome)
+app.register_blueprint(onboarding)
 
 def slash():
     # THis should get verified against the signing key
@@ -156,11 +163,26 @@ def message(payload):
         
         # Post the onboarding message in Slack
         output = slack_web_client.chat_postMessage(**coinbot.flip_coin(channel_id))
+        print("Coin Flip")
         return output
     elif text and text.lower() == "start":
+        print("Start onboarding")
         # This was a user doing the tutorial
         return start_onboarding(user_id, channel_id)
+    else:
+        print("Unknown payload")
+        print(json.dumps(json.loads(payload), indent=2))
 
+
+# When a 'message' event is detected by the events adapter, forward that payload
+# to this function.
+@slack_events_adapter.on("app_home_opened")
+def app_home_opened(payload):
+    """Parse the message event, and if the activation string is in the text,
+    simulate a coin flip and send the result.
+    """
+
+    apphome.app_home_opened(payload)
 
 if __name__ == "__main__":
     # Create the logging object

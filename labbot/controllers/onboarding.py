@@ -1,3 +1,9 @@
+from flask import Blueprint
+onboarding = Blueprint('onboarding', __name__, template_folder='templates/onboarding')
+@onboarding.route('/onboarding', defaults={'page': 'index'})
+@onboarding.route('/onboarding/index', methods=['POST'])
+def index():
+    pass
 # Store who has gotten a welcome message
 onboarding_tutorials_sent = {}
 
