@@ -8,7 +8,6 @@ from jinja2 import TemplateNotFound
 
 
 omw_api_key = os.environ.get("OMW_KEY")
-#omw_zip = os.environ.get("OMW_ZIP")
 
 #influx = InfluxDBClient(config['influx']['host'], 8086, config['influx']['username'], config['influx']['password'], 'weather')
 weather = Blueprint('weather', __name__, template_folder='templates/weather')
@@ -26,6 +25,7 @@ def get_weather():
         abort(403)
 
     args = text.split()
+    omw_zip = os.environ.get("OMW_ZIP")
 
     unit = 'c'
     regex = re.compile("\d\d\d\d\d")
