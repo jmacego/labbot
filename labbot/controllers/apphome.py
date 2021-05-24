@@ -1,12 +1,16 @@
+"""Build an interactive app home page"""
 import os
 import json
 import requests
 from flask import Blueprint
+
 apphome = Blueprint('apphome', __name__, template_folder='templates/apphome')
+
 @apphome.route('/apphome', defaults={'page': 'index'})
 @apphome.route('/apphome/index', methods=['POST'])
 def index():
-    pass
+    """Blank index page"""
+
 
 def app_home_opened(payload):
     """Parse the message event, and if the activation string is in the text,
@@ -15,10 +19,10 @@ def app_home_opened(payload):
 
     event = payload.get("event", {})
 
-    channel_id = event.get("channel")
+    #channel_id = event.get("channel")
     user_id = event.get("user")
-    text = event.get("text")
-    APP_HOME_BLOCK = {
+    #text = event.get("text")
+    app_home_block = {
                         "user_id": user_id,
                         "view": {
                             "type":"home",
@@ -40,4 +44,4 @@ See SYSNOTE tomorrow for more information."""
     headers = { "Content-type": "application/json",
                 "AUTHORIZATION": "Bearer " + os.environ.get("SLACK_TOKEN") }
 
-    x = requests.post(url, headers= headers, data = json.dumps(APP_HOME_BLOCK))
+    requests.post(url, headers= headers, data = json.dumps(app_home_block))
